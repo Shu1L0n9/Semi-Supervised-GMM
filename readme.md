@@ -1,7 +1,6 @@
 # Semi-Supervised Gaussian Mixture Model (SGMM) Implementation
 
-This project provides implementations of **Semi-Supervised Gaussian M## References
-
+This project provides unofficial implementations of Semi-Supervised Gaussian from References.
 
 ## References
 
