@@ -1,18 +1,18 @@
 function out = normalise(in)
-    % NORMALISE 将输入矩阵的每一行归一化，使其和为 1
-    % 输入:
-    %   in: 输入矩阵
-    % 输出:
-    %   out: 归一化后的矩阵
+    % NORMALISE Normalize the input so that the sum of each row is 1
+    % Input:
+    %   in: Input matrix
+    % Output:
+    %   out: Normalized matrix
     
-    in = double(in);  % 确保输入为双精度
+    in = double(in);  % Ensure the input is double precision
     
-    % 计算每行的和
+    % Compute the sum of each row
     row_sums = sum(in, 2);
     
-    % 防止除以 0
+    % If the sum is zero, set the result to zero
     row_sums(row_sums == 0) = 1;
     
-    % 归一化
+    % Normalize
     out = in ./ row_sums;
 end

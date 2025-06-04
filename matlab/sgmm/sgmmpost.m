@@ -1,27 +1,27 @@
 function [post, log_act] = sgmmpost(mix, x)
-% SGMMPOST 计算后验概率和对数激活值
+% SGMMPOST Calculate posterior probabilities and log activation values
 
-% 检查输入是否一致
+% Check input consistency
 errstring = consist(mix, 'gmm', double(x));
 if ~isempty(errstring)
     error(errstring);
 end
 
-% 计算对数激活值
+% Calculate log activation values
 log_act = double(zeros(size(x, 1), mix.ncentres));
 for k = 1:double(mix.ncentres)
     log_act(:, k) = gpdf(mix, double(x), double(k));
 end
 
-% 计算未归一化的对数后验概率
+% Calculate unnormalized log posterior probabilities
 log_post_unnormalized = log(double(mix.priors)) + log_act;
 
-% 归一化因子
+% Normalization factor
 log_sum_exp = logsumexp(log_post_unnormalized, 2);
 
-% 计算对数后验概率
+% Calculate log posterior probabilities
 log_post = log_post_unnormalized - log_sum_exp;
 
-% 转换为概率空间
+% Convert to probability space
 post = exp(log_post);
 end

@@ -1,5 +1,7 @@
 function n2 = dist(x, c)
-    % DIST 计算两组向量之间的欧氏距离的平方
+    % DIST Compute squared Euclidean distance between two sets of vectors
+    %   n2 = dist(x, c) returns a matrix of squared Euclidean distances between
+    %   each row vector in x and each row vector in c.
     x = double(x);
     c = double(c);
     [ndata, dimx] = size(x);

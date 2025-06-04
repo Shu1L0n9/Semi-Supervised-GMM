@@ -2,8 +2,8 @@ function [evals, evec] = eigdec(x, N)
     %EIGDEC	Sorted eigendecomposition
     %
     %	Description
-    %	 EVALS = EIGDEC(X, N) 计算矩阵 X 的前 N 个最大特征值，按降序排列。
-    %	 [EVALS, EVEC] = EIGDEC(X, N) 也计算对应的特征向量。
+    %	 EVALS = EIGDEC(X, N) computes the largest N eigenvalues of matrix X, sorted in descending order.
+    %	 [EVALS, EVEC] = EIGDEC(X, N) also computes the corresponding eigenvectors.
     %
     %	See also
     %	PCA, PPCA

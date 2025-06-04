@@ -1,35 +1,36 @@
 % test_sgmm.m
 %
-%   实验使用高斯混合模型 (GMM) 生成合成数据集，并基于半监督高斯混合模型 (SGMM) 对数据进行训练和评估。
-%   实验数据非常简单，旨在验证 sgmminit 和 sgmmem 等函数的正确性。
+%   Experiment: Semi-supervised GMM on synthetic data
+%   Experiment uses Gaussian Mixture Model (GMM) to generate synthetic datasets, and trains and evaluates the data based on Semi-supervised Gaussian Mixture Model (SGMM).
+%   The experimental data is very simple, aiming to verify the correctness of functions such as sgmminit and sgmmem.
 %
-%   协方差可以选择 spherical, diag, full 三种类型。
+%   Covariance can be chosen from spherical, diag, full types.
 %
-%   高斯混合模型 (GMM) 代码来自 Ian Nabney 编写的模式分析工具箱 Netlab。
+%   Gaussian Mixture Model (GMM) code is from the Pattern Analysis Toolbox Netlab written by Ian Nabney.
 %   https://www.mathworks.com/matlabcentral/fileexchange/2654-netlab
 %
 %
 
-% 清空工作区和命令行窗口
+% Clear workspace and command window
 clear;
 clc;
 
-% 添加子文件夹到路径
+% Add subfolders to path
 addpath('gmm');
 addpath('sgmm');
 
-% 生成合成数据
-% 设置基本参数
-dim = 2;                % 数据维度
-ncentres = 9;           % 高斯分量数
-ndata_total = 1800;     % 总数据点数
-labeled_ratio = 0.01;   % 有标签数据的比例
-covar_type = 'full';    % 协方差类型: 'spherical', 'diag', 'full'
+% Generate synthetic data
+% Set basic parameters
+dim = 2;                % Data dimension
+ncentres = 9;           % Number of Gaussian components
+ndata_total = 1800;     % Total number of data points
+labeled_ratio = 0.01;   % Ratio of labeled data
+covar_type = 'full';    % Covariance type: 'spherical', 'diag', 'full'
 
-% 生成真实的高斯混合模型
+% Generate true Gaussian Mixture Model
 true_mix = gmm(dim, ncentres, covar_type);
 
-% 根据协方差类型设置协方差矩阵
+% Set covariance matrix based on covariance type
 switch covar_type
     case 'spherical'
         true_mix.covars = 0.01 * ones(ncentres, 1);
@@ -42,7 +43,7 @@ switch covar_type
         end
 end
 
-% 设置中心点
+% Set centers
 true_mix.centres = [
     1 1;
     -1 -1;
@@ -55,82 +56,82 @@ true_mix.centres = [
     0 0;
 ];
 
-% 设置先验概率
+% Set prior probabilities
 true_mix.priors = [1/9 1/9 1/9 1/9 1/9 1/9 1/9 1/9 1/9];
 
-% 从真实模型中采样数据
+% Sample data from the true model
 [data, labels] = gmmsamp(true_mix, ndata_total);
 
-% 划分有标签和无标签数据
-% 应用 labeled_ratio
+% Divide labeled and unlabeled data
+% Apply labeled_ratio
 ndata_labeled = round(ndata_total * labeled_ratio);
 ndata_unlabeled = ndata_total - ndata_labeled;
 
-% 随机选择有标签数据的索引
+% Randomly select indices for labeled data
 labeled_idx = randperm(ndata_total, ndata_labeled);
 unlabeled_idx = setdiff(1:ndata_total, labeled_idx);
 
-% 分离数据
+% Separate data
 x_labeled = data(labeled_idx, :);
 c_labeled = labels(labeled_idx);
 x_unlabeled = data(unlabeled_idx, :);
 c_unlabeled = labels(unlabeled_idx);
 
-% 初始化 SGMM
+% Initialize SGMM
 mix = gmm(dim, ncentres, covar_type);
 options = foptions;
-options(1) = 1;     % 显示迭代信息
-options(3) = 1e-6;  % 设置收敛阈值
-options(5) = 1;     % 设置矩阵检查
-options(14) = 100;  % 最大迭代次数
+options(1) = 1;     % Display iteration information
+options(3) = 1e-6;  % Set convergence threshold
+options(5) = 1;     % Set matrix check
+options(14) = 100;  % Maximum number of iterations
 
-% 使用 kmeans 初始化
+% Initialize using kmeans
 mix = sgmminit(mix, [x_unlabeled; x_labeled]);
 
-% 打印初始化的SGMM参数
-disp('SGMM 初始参数：');
+% Print initialized SGMM parameters
+disp('Initial SGMM parameters:');
 disp(mix);
 
-% 训练 SGMM
+% Train SGMM
 [mix, options, errlog] = sgmmem(mix, x_unlabeled, x_labeled, c_labeled, options);
 
-% 用训练好的模型进行预测
-predictions = sgmmpred(mix, data);  % 预测所有数据
+% Predict using the trained model
+predictions = sgmmpred(mix, data);  % Predict all data
 
-% 可视化结果
+% Visualize results
 figure;
 
-% 绘制数据点和预测结果
+% Plot data points and prediction results
 subplot(2,1,1);
 hold on;
 
-% 绘制所有数据的预测结果, 避免重复绘制
+% Plot prediction results for all data, avoiding duplicate plotting
 for i = 1:ncentres
     scatter(data(predictions==i,1), data(predictions==i,2), 20, 'o', 'DisplayName', sprintf('Predicted Class %d', i),'MarkerEdgeAlpha',0.3, 'MarkerFaceColor', 'none');
 end
 
 plot(mix.centres(:,1), mix.centres(:,2), 'kx', 'MarkerSize', 10, 'LineWidth', 2, ...
     'DisplayName', 'Learned Centers');
-title('数据分布、预测结果和学习到的中心');
+title('Data distribution, prediction results and learned centers');
 legend('Location', 'best');
 axis equal;
 hold off;
 
-% 绘制误差曲线
+% Plot error curve
 subplot(2,1,2);
 plot(errlog, 'b-', 'LineWidth', 1.5);
-title('训练误差曲线');
-xlabel('迭代次数');
-ylabel('负对数似然');
+title('Training error curve');
+xlabel('Number of iterations');
+ylabel('Negative log-likelihood');
 grid on;
 
-% 打印结果
-fprintf('\n训练结果:\n');
-fprintf('最终误差值: %.4f\n', options(8));
-fprintf('\n学习到的模型参数:\n');
-fprintf('中心点:\n');
+% Print results
+fprintf('\nTraining results:\n');
+fprintf('Final error value: %.4f\n', options(8));
+fprintf('\nLearned model parameters:\n');
+fprintf('Centers:\n');
 disp(mix.centres);
-fprintf('协方差:\n');
+fprintf('Covariance:\n');
 disp(mix.covars);
-fprintf('混合系数:\n');
+fprintf('Mixing coefficients:\n');
 disp(mix.priors);

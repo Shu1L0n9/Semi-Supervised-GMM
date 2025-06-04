@@ -1,10 +1,10 @@
 function s = logsumexp(x, dim)
-    % LOGSUMEXP 计算 log(sum(exp(x),dim))，同时避免数值下溢。
-    % 默认 DIM = 1（按列计算）。
+    % LOGSUMEXP Compute log(sum(exp(x), dim)) in a numerically stable way.
+    % Default DIM = 1 (compute along columns).
     
     x = double(x);
     if nargin == 1
-        % 确定求和的维度
+        % Determine the dimension to sum over
         dim = find(size(x)~=1,1);
         if isempty(dim)
             dim = 1;
@@ -13,7 +13,7 @@ function s = logsumexp(x, dim)
         dim = double(dim);
     end
     
-    % 减去每个维度的最大值
+    % Subtract the maximum value along the specified dimension
     y = max(x, [], dim);
     x = bsxfun(@minus, x, y);
     s = y + log(sum(exp(x), dim));

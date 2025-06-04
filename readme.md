@@ -1,96 +1,98 @@
-# Semi-Supervised Gaussian Mixture Model (SGMM) 双语言实现
+# Semi-Supervised Gaussian Mixture Model (SGMM) Implementation
 
-本项目提供了**两种不同编程语言**的半监督高斯混合模型实现（MATLAB 和 Python），基于论文：
+This project provides implementations of **Semi-Supervised Gaussian M## References
 
-**"A Mixture of Experts Classifier with Learning Based on Both Labelled and Unlabelled Data"**  
-*作者：David J. Miller and Hasan S. Uyar*
 
-## 项目结构
+## References
+
+Miller, David J, and Hasan Uyar. “A Mixture of Experts Classifier with Learning Based on Both Labelled and Unlabelled Data.” In Advances in Neural Information Processing Systems, Vol. 9. MIT Press, 1996.
+
+## Project Structure
 
 ```plaintext
 Semi-Supervised GMM/
 │
-├── matlab/                         # MATLAB 实现版本
-│   ├── test_sgmm.m                # SGMM 基础功能验证实验
-│   ├── synthetic_data_classification.m # 合成数据分类实验
-│   ├── gmm/                       # 标准 GMM 实现（用于对比和数据生成）
-│   │   ├── gmm.m                  # GMM 核心函数
-│   │   ├── gmmsamp.m              # GMM 采样函数
-│   │   └── ···                    # 其他 GMM 相关函数
-│   └── sgmm/                      # 半监督 GMM 实现
-│       ├── sgmminit.m             # SGMM 初始化
-│       ├── sgmmem.m               # SGMM EM 算法
-│       ├── sgmmpred.m             # SGMM 预测
-│       ├── sgmmpost.m             # SGMM 后验概率计算
-│       └── ···                    # 其他 SGMM 相关函数
+├── matlab/                         # MATLAB implementation
+│   ├── test_sgmm.m                # SGMM basic functionality test
+│   ├── synthetic_data_classification.m # Synthetic data classification experiment
+│   ├── gmm/                       # Standard GMM implementation (for comparison and data generation)
+│   │   ├── gmm.m                  # GMM core functions
+│   │   ├── gmmsamp.m              # GMM sampling functions
+│   │   └── ···                    # Other GMM related functions
+│   └── sgmm/                      # Semi-supervised GMM implementation
+│       ├── sgmminit.m             # SGMM initialization
+│       ├── sgmmem.m               # SGMM EM algorithm
+│       ├── sgmmpred.m             # SGMM prediction
+│       ├── sgmmpost.m             # SGMM posterior probability calculation
+│       └── ···                    # Other SGMM related functions
 │
-├── python/                         # Python 实现版本
-│   ├── sgmm_core.py               # SGMM 核心算法实现
-│   ├── train_sgmm.py              # SGMM 训练脚本
-│   └── utils.py                   # 工具函数
+├── python/                         # Python implementation
+│   ├── sgmm_core.py               # SGMM core algorithm implementation
+│   ├── train_sgmm.py              # SGMM training script
+│   └── utils.py                   # Utility functions
 │
-├── data/                           # 数据集目录
-│   ├── mnist/                     # MNIST 数据集（需要自己准备）
-│   └── synthetic_data/            # 合成数据集
+├── data/                           # Dataset directory
+│   ├── mnist/                     # MNIST dataset (prepare yourself)
+│   └── synthetic_data/            # Synthetic dataset
 │       ├── synthetic_data_train.csv
 │       └── synthetic_data_test.csv
 │
-└── README.md                      # 项目说明文档
+└── README.md                      # Project documentation
 ```
 
-## 两种实现版本
+## Two Implementation Versions
 
-### MATLAB 版本
-- **特点**：原始论文算法的直接实现，完全遵循论文中的数学公式
-- **优势**：数学计算精确，矩阵运算高效，适合算法研究和验证
-- **适用场景**：学术研究、算法验证、小规模实验
+### MATLAB Version
+- **Features**: Direct implementation of the original paper algorithm, fully following the mathematical formulas in the paper
+- **Advantages**: Precise mathematical calculations, efficient matrix operations, suitable for algorithm research and validation
+- **Use Cases**: Academic research, algorithm validation, small-scale experiments
 
-### Python 版本  
-- **特点**：基于现代机器学习框架的优化实现
-- **优势**：代码可读性强，易于扩展，支持大规模数据处理
-- **适用场景**：实际应用、大规模实验、工程项目
+### Python Version  
+- **Features**: Optimized implementation based on modern machine learning frameworks
+- **Advantages**: High code readability, easy to extend, supports large-scale data processing
+- **Use Cases**: Practical applications, large-scale experiments, engineering projects
 
-## 算法简介
+## Algorithm Overview
 
-半监督高斯混合模型 (SGMM) 是一种混合专家分类器，能够同时利用有标签和无标签数据进行学习。该方法的核心思想是：
+The Semi-Supervised Gaussian Mixture Model (SGMM) is a mixture of experts classifier that can learn from both labeled and unlabeled data simultaneously. The core idea of this method is:
 
-- **有标签数据**：用于监督学习，直接优化分类性能
-- **无标签数据**：通过 EM 算法进行无监督学习，改善模型的密度估计
-- **混合学习**：结合两种数据类型的信息，提高分类精度和泛化能力
+- **Labeled Data**: Used for supervised learning to directly optimize classification performance
+- **Unlabeled Data**: Used for unsupervised learning through EM algorithm to improve model density estimation
+- **Hybrid Learning**: Combines information from both data types to improve classification accuracy and generalization ability
 
-支持三种协方差矩阵类型：
-- `spherical`：球形协方差（各分量独立且方差相等）
-- `diag`：对角协方差（各分量独立但方差不等）
-- `full`：完全协方差（允许分量间相关）
+Supports three types of covariance matrices:
+- `spherical`: Spherical covariance (independent components with equal variance)
+- `diag`: Diagonal covariance (independent components with unequal variance)
+- `full`: Full covariance (allows correlation between components)
 
-## 实验脚本说明
+## Experiment Scripts
 
-### MATLAB 实验
+### MATLAB Experiments
 
 #### 1. test_sgmm.m
-基础功能验证实验。使用 GMM 生成简单的合成数据集，验证 SGMM 核心函数（`sgmminit`、`sgmmem` 等）的正确性。支持三种协方差类型的测试。
+Basic functionality verification experiment. Uses GMM to generate simple synthetic datasets to validate the correctness of SGMM core functions (`sgmminit`, `sgmmem`, etc.). Supports testing of three covariance types.
 
 #### 2. synthetic_data_classification.m
-合成数据分类实验。对 dollar sign 形状的合成数据进行分类，主要评估使用完全协方差矩阵时 SGMM 的分类性能。
+Synthetic data classification experiment. Performs classification on dollar sign-shaped synthetic data, primarily evaluating SGMM classification performance using full covariance matrices.
 
-### Python 实验
+### Python Experiments
 
 #### 1. train_sgmm.py
-SGMM 训练脚本，提供完整的训练流程和参数设置。
+SGMM training script providing complete training process and parameter settings.
 
 #### 2. sgmm_core.py
-包含 SGMM 的核心算法实现，包括初始化、EM 算法更新和预测功能。
+Contains core SGMM algorithm implementation, including initialization, EM algorithm updates, and prediction functions.
 
-## 快速开始
+## Quick Start
 
-### MATLAB 版本
+### MATLAB Version
 
-#### 环境要求
-- MATLAB R2016b 或更高版本
+#### Requirements
+- MATLAB R2016b or higher
 
-#### 运行步骤
-1. 在 MATLAB 中打开项目目录
-2. 添加子文件夹到 MATLAB 路径：
+#### Steps
+1. Open the project directory in MATLAB
+2. Add subfolders to MATLAB path:
 
 ```matlab
 addpath('matlab/sgmm');
@@ -98,43 +100,39 @@ addpath('matlab/gmm');
 addpath('data');
 ```
 
-3. 运行基础验证实验：
+3. Run basic verification experiment:
 
 ```matlab
 cd matlab
 test_sgmm
 ```
 
-4. 运行合成数据分类实验：
+4. Run synthetic data classification experiment:
 
 ```matlab
 synthetic_data_classification
 ```
 
-### Python 版本
+### Python Version
 
-#### 环境要求
-- Python 3.7 或更高版本
-- NumPy, SciPy, scikit-learn, matplotlib 等依赖包
+#### Requirements
+- Python 3.7 or higher
+- Dependencies: NumPy, SciPy, scikit-learn, matplotlib, etc.
 
-#### 运行步骤
-1. 安装依赖包：
+#### Steps
+1. Install dependencies:
 
 ```bash
 pip install numpy scipy scikit-learn matplotlib pandas
 ```
 
-2. 运行训练脚本：
+2. Run training script:
 
 ```bash
 cd python
 python train_sgmm.py
 ```
 
-## 参考文献
+## License
 
-Miller, David J, and Hasan Uyar. “A Mixture of Experts Classifier with Learning Based on Both Labelled and Unlabelled Data.” In Advances in Neural Information Processing Systems, Vol. 9. MIT Press, 1996.
-
-## 许可证
-
-本项目仅供学术研究使用。
+This project is for academic research use only.
