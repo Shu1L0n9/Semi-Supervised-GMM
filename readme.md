@@ -6,6 +6,20 @@ This project provides unofficial implementations of Semi-Supervised Gaussian fro
 
 Miller, David J, and Hasan Uyar. “A Mixture of Experts Classifier with Learning Based on Both Labelled and Unlabelled Data.” In Advances in Neural Information Processing Systems, Vol. 9. MIT Press, 1996.
 
+## 📚 Citation
+
+You can cite the SGMM method proposed by Miller and Uyar using the following BibTeX entry:
+
+```bibtex
+@inproceedings{miller1996mixture,
+  title     = {A mixture of experts classifier with learning based on both labelled and unlabelled data},
+  author    = {Miller, David J. and Uyar, Hasan},
+  booktitle = {Advances in Neural Information Processing Systems},
+  volume    = {9},
+  year      = {1996}
+}
+```
+
 ## Project Structure
 
 ```plaintext
